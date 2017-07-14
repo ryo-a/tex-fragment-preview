@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TeX(MathJax) Fragment Previewer</title>
+</head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ showProcessingMessages: false, tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] } });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+  const clipboard = require('electron').clipboard;
+  var texBuffer = "";
+
+  function clearInput() {
+    document.getElementById('texInput').value = '';
+    document.getElementById('texPreview').innerHTML = '';
+  }
+
+  function copyFromClipboard() {
+    document.getElementById('texInput').value = clipboard.readText();
+    preview();
+  }
+
+  function copyToClipboard() {
+    clipboard.writeText(document.getElementById('texInput').value);
+  }
+
+  function preview() {
+    if (document.getElementById('texInput').value != texBuffer) {
+      document.getElementById('texPreview').innerHTML = document.getElementById('texInput').value;
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, "preview"]);
+    }
+    texBuffer = document.getElementById('texInput').value;
+  }
+</script>
+<style>
+  html,
+  body {
+    margin: 0px;
+  }
+
+  body {
+    background-color: #252526;
+    color: #bbbbbb;
+    font-family: monospace;
+    padding: 10px;
+  }
+
+  button {
+    background-color: #8E8E8E;
+    border: none;
+    transition: background-color 0.5s;
+  }
+
+  button:hover {
+    background-color: #FFF;
+  }
+
+  #texPreview {
+    background-color: #CCC;
+    color: #1E1E1E;
+    font-size: 1.3em;
+    width: 98%;
+    border: 1px solid;
+    padding: 5px;
+    font-family: sans-serif;
+  }
+
+  .areas {
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  .preview {
+    padding-top: 5px;
+    width: 100%;
+  }
+
+  #texInput {
+    width: 98%;
+    background-color: #1E1E1E;
+    color: #fff;
+    font-size: 1.3em;
+    padding: 5px;
+  }
+</style>
+
+<body>
+
+  <div class="tools">
+    <button onclick="clearInput()">Clear</button>
+    <button onclick="copyFromClipboard()">Copy from Clipboard</button>
+    <button onclick="copyToClipboard()">Copy To Clipboard</button>
+  </div>
+
+  <div class="areas">
+    TeX
+    <textarea id="texInput" onkeyup="preview()" placeholder="Input here like this:  \(E=mc^2\)"></textarea>
+  </div>
+
+  <div class="preview">
+    Preview
+    <div id="texPreview"></div>
+  </div>
+  <p style="font-size:1em;">Rendering \(\rm\TeX\) powered by MathJax</p>
+
+</body>
+
+</html>
